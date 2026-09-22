@@ -16,6 +16,7 @@
   @media (max-width: 720px) { .products { grid-template-columns: 1fr; } header.hero h1 { font-size: 1.9rem; } }
   .card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 6px 24px rgba(26,43,74,0.10); display: flex; flex-direction: column; }
   .card img { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; }
+  .card video { width: 100%; display: block; aspect-ratio: 16/9; background: #000; }
   .card-body { padding: 28px; display: flex; flex-direction: column; flex: 1; }
   .card-body h2 { font-size: 1.5rem; margin-bottom: 6px; }
   .price { font-size: 1.05rem; font-weight: 700; color: #2c3f7a; margin-bottom: 14px; }
@@ -41,7 +42,7 @@
   <div class="products">
 
     <section class="card">
-      <img src="assets/freelancer-os-cover.png" alt="Freelancer Client OS cover">
+      <video controls preload="metadata" poster="assets/freelancer-os-cover.png" src="assets/freelancer-os-demo.mp4"></video>
       <div class="card-body">
         <h2>Freelancer Client OS</h2>
         <div class="price">$19 USD · one-time</div>
@@ -56,7 +57,7 @@
     </section>
 
     <section class="card">
-      <img src="assets/job-tracker-cover.png" alt="Job Application Tracker cover">
+      <video controls preload="metadata" poster="assets/job-tracker-cover.png" src="assets/job-tracker-demo-v2.mp4"></video>
       <div class="card-body">
         <h2>Job Application Tracker</h2>
         <div class="price">$15 USD · one-time</div>
