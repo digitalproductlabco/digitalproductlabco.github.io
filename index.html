@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Product Lab Co. — Simple tools for freelancers &amp; job seekers</title>
+<meta name="description" content="Freelancer Client OS and Job Application Tracker — simple, one-time-purchase spreadsheet kits for freelancers and job seekers.">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #1a2b4a; background: #f7f8fc; line-height: 1.6; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+  header.hero { text-align: center; padding: 72px 20px 48px; background: linear-gradient(135deg, #1a2b4a 0%, #2c3f7a 60%, #4a5fa5 100%); color: #fff; }
+  header.hero h1 { font-size: 2.4rem; letter-spacing: -0.5px; margin-bottom: 12px; }
+  header.hero p { font-size: 1.15rem; opacity: 0.92; max-width: 560px; margin: 0 auto; }
+  .products { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; padding: 48px 0; }
+  @media (max-width: 720px) { .products { grid-template-columns: 1fr; } header.hero h1 { font-size: 1.9rem; } }
+  .card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 6px 24px rgba(26,43,74,0.10); display: flex; flex-direction: column; }
+  .card img { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; }
+  .card-body { padding: 28px; display: flex; flex-direction: column; flex: 1; }
+  .card-body h2 { font-size: 1.5rem; margin-bottom: 6px; }
+  .price { font-size: 1.05rem; font-weight: 700; color: #2c3f7a; margin-bottom: 14px; }
+  .card-body ul { list-style: none; margin-bottom: 22px; }
+  .card-body ul li { padding: 6px 0 6px 28px; position: relative; font-size: 0.98rem; }
+  .card-body ul li::before { content: "✓"; position: absolute; left: 4px; color: #2e9e5b; font-weight: 700; }
+  .btn { display: inline-block; text-align: center; background: #1a2b4a; color: #fff; text-decoration: none; font-weight: 700; font-size: 1.05rem; padding: 14px 28px; border-radius: 10px; margin-top: auto; transition: background 0.2s; }
+  .btn:hover { background: #2c3f7a; }
+  .btn.orange { background: #e07b2a; }
+  .btn.orange:hover { background: #c96a1f; }
+  .note { text-align: center; color: #5a6b8c; font-size: 0.95rem; padding: 0 20px 40px; }
+  footer { text-align: center; padding: 28px 20px; color: #8a97b5; font-size: 0.85rem; border-top: 1px solid #e6e9f2; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>Digital Product Lab Co.</h1>
+  <p>Simple, no-subscription tools for freelancers and job seekers. Pay once, keep forever.</p>
+</header>
+
+<main class="wrap">
+  <div class="products">
+
+    <section class="card">
+      <img src="assets/freelancer-os-cover.png" alt="Freelancer Client OS cover">
+      <div class="card-body">
+        <h2>Freelancer Client OS</h2>
+        <div class="price">$19 USD · one-time</div>
+        <ul>
+          <li>Track clients, projects &amp; invoices in one spreadsheet</li>
+          <li>Works in Excel and Google Sheets</li>
+          <li>Matching Notion kit included</li>
+          <li>Instant download after purchase</li>
+        </ul>
+        <a class="btn" href="https://digitalproductlabco.gumroad.com/l/astwqw">Get Freelancer Client OS</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <img src="assets/job-tracker-cover.png" alt="Job Application Tracker cover">
+      <div class="card-body">
+        <h2>Job Application Tracker</h2>
+        <div class="price">$15 USD · one-time</div>
+        <ul>
+          <li>Log every application: company, role, salary, status</li>
+          <li>Follow-up dates so nothing slips</li>
+          <li>Dashboard of your search at a glance</li>
+          <li>Interview prep checklist included</li>
+        </ul>
+        <a class="btn orange" href="https://digitalproductlabco.gumroad.com/l/vhqvf">Get Job Application Tracker</a>
+      </div>
+    </section>
+
+  </div>
+
+  <p class="note">Secure checkout via Gumroad. You'll get an instant download link after payment — no account needed.</p>
+</main>
+
+<footer>
+  © 2026 Digital Product Lab Co. All rights reserved.
+</footer>
+
+</body>
+</html>
