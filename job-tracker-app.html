@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Application Tracker</title>
+<style>
+  :root{
+    --navy:#25237e; --navy-dark:#1b1a63; --bg:#f3f2fa; --card:#ffffff;
+    --ink:#1e1c3f; --muted:#6f6c8a; --line:#e7e5f3;
+    --orange:#f59e0b; --shadow:0 6px 24px rgba(37,35,126,.08);
+    --radius:16px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased;}
+  header{background:linear-gradient(135deg,var(--navy),var(--navy-dark)); color:#fff;
+         padding:14px 20px; position:sticky; top:0; z-index:50;}
+  .bar{max-width:1080px; margin:0 auto; display:flex; align-items:center; gap:18px;}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:800; font-size:19px; white-space:nowrap;}
+  .brand .logo{width:34px; height:34px; border-radius:10px; background:var(--orange);
+               display:flex; align-items:center; justify-content:center; font-size:18px;}
+  nav{display:flex; gap:4px; margin-left:auto; overflow-x:auto;}
+  nav button{background:transparent; border:0; color:#cfcdeb; font-size:15px; font-weight:600;
+             padding:9px 14px; border-radius:10px; cursor:pointer; white-space:nowrap;}
+  nav button.active{background:rgba(255,255,255,.16); color:#fff;}
+  main{max-width:1080px; margin:0 auto; padding:22px 16px 60px;}
+  .hero{margin:6px 4px 18px;}
+  .hero h1{font-size:clamp(22px,4.5vw,32px); font-weight:800; letter-spacing:-.02em;}
+  .hero p{color:var(--muted); margin-top:6px; font-size:15px;}
+  .grid{display:grid; gap:16px;}
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px;}
+  .stat{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+        padding:16px; display:flex; gap:12px; align-items:center;}
+  .stat .ico{width:42px; height:42px; border-radius:12px; display:flex; align-items:center;
+             justify-content:center; font-size:20px; flex:none;}
+  .stat .num{font-size:24px; font-weight:800;}
+  .stat .lbl{font-size:12.5px; color:var(--muted); font-weight:600;}
+  .card{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px;}
+  .card h2{font-size:18px; font-weight:800; margin-bottom:4px;}
+  .card .sub{font-size:13px; color:var(--muted); margin-bottom:14px;}
+  .two{display:grid; grid-template-columns:1.4fr 1fr; gap:16px;}
+  @media(max-width:820px){.two{grid-template-columns:1fr;}}
+  table{width:100%; border-collapse:collapse; font-size:14px;}
+  th{text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.04em;
+     color:var(--muted); padding:10px 8px; border-bottom:2px solid var(--line); white-space:nowrap;}
+  td{padding:11px 8px; border-bottom:1px solid var(--line); vertical-align:middle;}
+  tr:last-child td{border-bottom:0;}
+  .co{display:flex; align-items:center; gap:10px; font-weight:700;}
+  .avatar{width:34px; height:34px; border-radius:50%; color:#fff; font-weight:800;
+          display:flex; align-items:center; justify-content:center; flex:none; font-size:15px;}
+  .role-sub{font-size:12px; color:var(--muted); font-weight:500;}
+  .pill{display:inline-block; padding:5px 12px; border-radius:999px; font-size:12.5px; font-weight:700; white-space:nowrap;}
+  .p-Wishlist{background:#e8eaed; color:#5f6368;}
+  .p-Applied{background:#ddebf7; color:#1a56c4;}
+  .p-Screening{background:#fff2cc; color:#8a5a00;}
+  .p-Interview{background:#fce4d6; color:#c25e00;}
+  .p-Offer{background:#e2efda; color:#137333;}
+  .p-Rejected{background:#f2dcdb; color:#b3261e;}
+  .p-Withdrawn{background:#d9d9d9; color:#444;}
+  .overdue{background:#fdeceb !important;}
+  .overdue .fud{color:#b3261e; font-weight:800;}
+  .toolbar{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px;}
+  .toolbar input[type=search], .toolbar select{padding:10px 12px; border:1.5px solid var(--line);
+      border-radius:10px; font-size:14px; background:#fff; color:var(--ink);}
+  .btn{background:var(--navy); color:#fff; border:0; border-radius:10px; padding:11px 18px;
+       font-size:14.5px; font-weight:700; cursor:pointer;}
+  .btn:hover{background:var(--navy-dark);}
+  .btn.ghost{background:#eeedf7; color:var(--navy);}
+  .btn.danger{background:#b3261e;}
+  .btn.small{padding:7px 12px; font-size:13px;}
+  .iconbtn{background:#eeedf7; border:0; border-radius:8px; padding:6px 10px; cursor:pointer; font-size:14px;}
+  .badge{display:inline-block; background:#fdebd3; color:#b26a00; font-weight:800; font-size:13px;
+         padding:6px 12px; border-radius:999px; margin-top:10px;}
+  .alert-row{display:flex; gap:12px; align-items:flex-start; padding:12px; border-radius:12px; margin-bottom:10px;}
+  .alert-row.red{background:#fdeceb;} .alert-row.amber{background:#fff7e0;}
+  .alert-row .t{font-weight:700; font-size:14px;} .alert-row .d{font-size:13px; color:var(--muted);}
+  canvas.chart{width:100%; height:190px; display:block;}
+  .check{display:flex; gap:12px; align-items:flex-start; padding:13px 6px; border-bottom:1px solid var(--line); cursor:pointer;}
+  .check:last-child{border-bottom:0;}
+  .check input{width:20px; height:20px; margin-top:2px; accent-color:var(--navy); flex:none; cursor:pointer;}
+  .check.done .t{text-decoration:line-through; color:var(--muted);}
+  .check .t{font-weight:600; font-size:14.5px;}
+  .modal-veil{position:fixed; inset:0; background:rgba(20,18,60,.5); display:none;
+              align-items:flex-start; justify-content:center; padding:24px 14px; z-index:100; overflow-y:auto;}
+  .modal-veil.open{display:flex;}
+  .modal{background:#fff; border-radius:18px; padding:24px; width:100%; max-width:560px; box-shadow:var(--shadow);}
+  .modal h3{font-size:19px; margin-bottom:14px;}
+  .frow{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;}
+  .frow.full{grid-template-columns:1fr;}
+  @media(max-width:520px){.frow{grid-template-columns:1fr;}}
+  .field label{display:block; font-size:12.5px; font-weight:700; color:var(--muted); margin-bottom:5px;}
+  .field input, .field select, .field textarea{width:100%; padding:10px 12px; border:1.5px solid var(--line);
+      border-radius:10px; font-size:14.5px; font-family:inherit; color:var(--ink); background:#fff;}
+  .field textarea{resize:vertical; min-height:64px;}
+  .mrow{display:flex; gap:10px; justify-content:flex-end; margin-top:18px;}
+  .note{background:#eef0ff; border-radius:12px; padding:14px 16px; font-size:13.5px; color:#3c3a6e; margin-bottom:14px;}
+  .empty{text-align:center; color:var(--muted); padding:34px 10px; font-size:14.5px;}
+  .view{display:none;} .view.active{display:block;}
+  .scrollx{overflow-x:auto;}
+  footer{text-align:center; color:var(--muted); font-size:12.5px; padding:26px 0 10px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="brand"><span class="logo">📋</span> Job Application Tracker</div>
+    <nav id="nav">
+      <button data-view="dashboard" class="active">Dashboard</button>
+      <button data-view="applications">Applications</button>
+      <button data-view="prep">Interview Prep</button>
+      <button data-view="settings">Settings</button>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="hero">
+    <h1>Track every application. Never miss a follow-up.</h1>
+    <p id="updated-line"></p>
+  </div>
+
+  <!-- DASHBOARD -->
+  <section id="view-dashboard" class="view active">
+    <div class="grid">
+      <div class="stats" id="stat-cards"></div>
+      <div class="two">
+        <div class="card">
+          <h2>Weekly Overview</h2>
+          <div class="sub">Applications per week</div>
+          <canvas class="chart" id="week-chart"></canvas>
+          <div id="wow-badge"></div>
+        </div>
+        <div class="card">
+          <h2>Follow-up Alerts</h2>
+          <div class="sub">Overdue and upcoming follow-ups</div>
+          <div id="alerts"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Applications Tracker</h2>
+        <div class="sub" id="tracker-sub"></div>
+        <div class="scrollx"><table>
+          <thead><tr><th>Company</th><th>Role</th><th>Date Applied</th><th>Status</th><th>Follow-up Date</th></tr></thead>
+          <tbody id="recent-rows"></tbody>
+        </table></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- APPLICATIONS -->
+  <section id="view-applications" class="view">
+    <div class="card">
+      <div class="toolbar">
+        <input type="search" id="q" placeholder="Search company or role…">
+        <select id="fstatus">
+          <option value="">All statuses</option>
+          <option>Wishlist</option><option>Applied</option><option>Screening</option>
+          <option>Interview</option><option>Offer</option><option>Rejected</option><option>Withdrawn</option>
+        </select>
+        <button class="btn" id="add-btn" style="margin-left:auto">+ Add application</button>
+      </div>
+      <div class="scrollx"><table>
+        <thead><tr><th>Company</th><th>Role</th><th>Date Applied</th><th>Status</th><th>Follow-up</th><th></th></tr></thead>
+        <tbody id="app-rows"></tbody>
+      </table></div>
+      <div class="empty" id="apps-empty" style="display:none">No applications yet. Add your first one above.</div>
+    </div>
+  </section>
+
+  <!-- INTERVIEW PREP -->
+  <section id="view-prep" class="view">
+    <div class="card">
+      <h2>Interview Prep Checklist</h2>
+      <div class="sub">Work through this list before every interview. Your checkmarks are saved.</div>
+      <div id="prep-list"></div>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="view-settings" class="view">
+    <div class="card">
+      <h2>Settings</h2>
+      <div class="sub">Your data</div>
+      <div class="note">Everything you enter is stored privately in this browser on this device. Nothing is sent anywhere. Use Export to back up your data as a file.</div>
+      <div class="toolbar">
+        <button class="btn ghost" id="export-btn">Export backup</button>
+        <button class="btn ghost" id="import-btn">Import backup</button>
+        <input type="file" id="import-file" accept="application/json" style="display:none">
+        <button class="btn ghost" id="samples-btn">Restore sample data</button>
+        <button class="btn danger" id="clear-btn">Delete all data</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>Job Application Tracker · your data stays in your browser</footer>
+</main>
+
+<!-- MODAL -->
+<div class="modal-veil" id="veil">
+  <div class="modal">
+    <h3 id="modal-title">Add application</h3>
+    <form id="app-form">
+      <div class="frow">
+        <div class="field"><label>Company *</label><input name="company" required></div>
+        <div class="field"><label>Role *</label><input name="role" required></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>Location</label><input name="location" placeholder="Remote"></div>
+        <div class="field"><label>Salary range</label><input name="salary" placeholder="$90k–$110k"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>Date applied</label><input type="date" name="dateApplied"></div>
+        <div class="field"><label>Source</label><select name="source">
+          <option>LinkedIn</option><option>Indeed</option><option>Company Site</option>
+          <option>Referral</option><option>Recruiter</option><option>Other</option></select></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>Status</label><select name="status">
+          <option>Wishlist</option><option selected>Applied</option><option>Screening</option>
+          <option>Interview</option><option>Offer</option><option>Rejected</option><option>Withdrawn</option></select></div>
+        <div class="field"><label>Follow-up date</label><input type="date" name="followUp"></div>
+      </div>
+      <div class="frow">
+        <div class="field"><label>Contact</label><input name="contact"></div>
+        <div class="field"><label>Job link</label><input name="link" placeholder="https://…"></div>
+      </div>
+      <div class="frow full">
+        <div class="field"><label>Notes</label><textarea name="notes"></textarea></div>
+      </div>
+      <div class="mrow">
+        <button type="button" class="btn ghost" id="cancel-btn">Cancel</button>
+        <button type="submit" class="btn">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+"use strict";
+/* ---------- sample data (matches the spreadsheet version) ---------- */
+const SAMPLE_APPS = [
+  {company:"Acme Corp", role:"Product Designer", location:"Remote", salary:"$90k-$110k", dateApplied:"2026-09-02", source:"LinkedIn", status:"Interview", followUp:"2026-09-20", contact:"Jane Doe", link:"", notes:"Portfolio walkthrough went well"},
+  {company:"Beta Labs", role:"Frontend Developer", location:"New York, NY", salary:"$120k-$140k", dateApplied:"2026-09-05", source:"Company Site", status:"Applied", followUp:"2026-09-19", contact:"", link:"", notes:""},
+  {company:"Gamma Studio", role:"UX Researcher", location:"Remote", salary:"$85k-$100k", dateApplied:"2026-08-28", source:"Referral", status:"Screening", followUp:"2026-09-18", contact:"Tom Lee (referral)", link:"", notes:"Referred by Tom - follow up"},
+  {company:"Delta Inc", role:"Data Analyst", location:"Chicago, IL", salary:"$95k-$115k", dateApplied:"2026-09-10", source:"Indeed", status:"Applied", followUp:"2026-09-24", contact:"", link:"", notes:""},
+  {company:"Epsilon Co", role:"Marketing Manager", location:"Austin, TX", salary:"$80k-$95k", dateApplied:"2026-08-20", source:"LinkedIn", status:"Rejected", followUp:"", contact:"", link:"", notes:"Generic rejection email 9/12"},
+  {company:"Zeta Systems", role:"DevOps Engineer", location:"Remote", salary:"$130k-$150k", dateApplied:"2026-09-12", source:"Recruiter", status:"Interview", followUp:"2026-09-22", contact:"Priya N. (recruiter)", link:"", notes:"Tech screen passed, onsite next"},
+  {company:"Eta Group", role:"Customer Success Lead", location:"Boston, MA", salary:"$75k-$90k", dateApplied:"2026-09-01", source:"Company Site", status:"Offer", followUp:"", contact:"Sam K.", link:"", notes:"Offer received 9/16 - deciding"},
+  {company:"Theta Works", role:"QA Engineer", location:"Remote", salary:"$85k-$105k", dateApplied:"2026-08-15", source:"Indeed", status:"Withdrawn", followUp:"", contact:"", link:"", notes:"Withdrew - comp too low"},
+  {company:"Iota Labs", role:"Backend Developer", location:"San Francisco, CA", salary:"$140k-$160k", dateApplied:"2026-09-15", source:"LinkedIn", status:"Screening", followUp:"2026-09-25", contact:"", link:"", notes:""},
+  {company:"Kappa Media", role:"Content Strategist", location:"Remote", salary:"$70k-$85k", dateApplied:"2026-09-08", source:"Referral", status:"Wishlist", followUp:"", contact:"", link:"", notes:"Dream role - apply this week"}
+];
+const PREP_ITEMS = [
+  "Research the company: mission, products, recent news",
+  "Re-read the job description and match your experience to it",
+  "Prepare 3 STAR stories (Situation, Task, Action, Result)",
+  "Prepare 5 questions to ask the interviewer",
+  "Update your resume bullet points for this specific role",
+  "Test your tech setup: camera, microphone, internet",
+  "Plan your outfit and tidy your background",
+  "Send a thank-you email within 24 hours",
+  "Log the interview outcome on the Applications tab"
+];
+const ACTIVE = ["Applied","Screening","Interview"];
+const LS_KEY = "jat-v1";
+
+/* ---------- state ---------- */
+let state = load() || { apps: SAMPLE_APPS.map((a,i)=>({...a, id:"s"+(i+1)})), prep:{} };
+let editingId = null;
+function load(){ try{ const raw = localStorage.getItem(LS_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } }
+function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} }
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const AVATAR_COLORS = ["#25237e","#c25e00","#137333","#1a56c4","#b3261e","#8a5a00","#6d28d9"];
+function avatarColor(name){ let h=0; for(const c of name) h=(h*31+c.charCodeAt(0))>>>0; return AVATAR_COLORS[h%AVATAR_COLORS.length]; }
+function fmtDate(iso){ if(!iso) return "—"; const [y,m,d]=iso.split("-").map(Number);
+  return new Date(y,m-1,d).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"}); }
+function todayISO(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function isOverdue(a){ const t=todayISO(); return a.followUp && a.followUp<=t && ACTIVE.includes(a.status); }
+function pill(s){ return `<span class="pill p-${esc(s)}">${esc(s)}</span>`; }
+function avatar(name){ return `<span class="avatar" style="background:${avatarColor(name||"?")}">${esc((name||"?").trim()[0].toUpperCase())}</span>`; }
+
+/* ---------- nav ---------- */
+$("nav").addEventListener("click", e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  document.querySelectorAll("#nav button").forEach(x=>x.classList.toggle("active", x===b));
+  document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active", v.id==="view-"+b.dataset.view));
+  if(b.dataset.view==="dashboard") renderDashboard();
+  if(b.dataset.view==="applications") renderApps();
+  window.scrollTo({top:0});
+});
+
+/* ---------- dashboard ---------- */
+function stats(){
+  const apps = state.apps, n = apps.length;
+  const active = apps.filter(a=>ACTIVE.includes(a.status)).length;
+  const interviews = apps.filter(a=>a.status==="Interview").length;
+  const offers = apps.filter(a=>a.status==="Offer").length;
+  const responded = apps.filter(a=>["Screening","Interview","Offer"].includes(a.status)).length;
+  return { n, active, interviews, offers, rate: n? Math.round(responded/n*100):0 };
+}
+function renderDashboard(){
+  const s = stats();
+  const cards = [
+    ["📝","Total Applications", s.n, "#25237e"],
+    ["📁","Active Applications", s.active, "#f59e0b"],
+    ["👤","Interviews", s.interviews, "#1a56c4"],
+    ["🏆","Offers", s.offers, "#137333"],
+    ["📈","Response Rate", s.rate+"%", "#6d28d9"]
+  ];
+  $("stat-cards").innerHTML = cards.map(c=>
+    `<div class="stat"><span class="ico" style="background:${c[3]}22">${c[0]}</span>
+     <span><span class="num">${c[2]}</span><br><span class="lbl">${c[1]}</span></span></div>`).join("");
+  $("updated-line").textContent = s.n + (s.n===1?" application":" applications") + " tracked · Updated today " +
+    new Date().toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
+  renderChart(); renderAlerts(); renderRecent();
+}
+function weekBuckets(){
+  // last 8 weeks, Monday-start
+  const out=[]; const now=new Date(); now.setHours(0,0,0,0);
+  const monday = new Date(now); monday.setDate(now.getDate()-((now.getDay()+6)%7));
+  for(let i=7;i>=0;i--){
+    const start=new Date(monday); start.setDate(monday.getDate()-i*7);
+    const end=new Date(start); end.setDate(start.getDate()+6);
+    const sISO=start.toISOString().slice(0,10), eISO=end.toISOString().slice(0,10);
+    const count=state.apps.filter(a=>a.dateApplied>=sISO && a.dateApplied<=eISO).length;
+    out.push({label:start.toLocaleDateString(undefined,{month:"short",day:"numeric"}), count});
+  }
+  return out;
+}
+function renderChart(){
+  const cv=$("week-chart"), data=weekBuckets();
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+  cv.width=W*dpr; cv.height=H*dpr;
+  const ctx=cv.getContext("2d"); ctx.scale(dpr,dpr); ctx.clearRect(0,0,W,H);
+  const max=Math.max(1,...data.map(d=>d.count));
+  const padL=8, padB=26, padT=18, gap=10;
+  const bw=(W-padL*2-data.length*gap)/data.length, base=H-padB;
+  ctx.font="11px -apple-system,Segoe UI,Roboto,sans-serif"; ctx.textAlign="center";
+  data.forEach((d,i)=>{
+    const h=(H-padB-padT)*(d.count/max), x=padL+i*(bw+gap);
+    ctx.fillStyle = i%2? "#25237e" : "#f5a623";
+    const r=6, y=base-h;
+    ctx.beginPath();
+    if(h>0){ ctx.moveTo(x,base); ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+      ctx.lineTo(x+bw-r,y); ctx.quadraticCurveTo(x+bw,y,x+bw,y+r); ctx.lineTo(x+bw,base); ctx.closePath(); ctx.fill(); }
+    if(d.count>0){ ctx.fillStyle="#1e1c3f"; ctx.fillText(d.count, x+bw/2, y-5); }
+    ctx.fillStyle="#6f6c8a"; ctx.fillText(d.label, x+bw/2, H-9);
+  });
+  const cur=data[7].count, prev=data[6].count;
+  let badge;
+  if(prev===0 && cur===0) badge="No change vs last week";
+  else if(prev===0) badge="↑ new activity vs last week";
+  else { const p=Math.round((cur-prev)/prev*100); badge=(p>=0?"↑ +":"↓ ")+p+"% vs last week"; }
+  $("wow-badge").innerHTML=`<span class="badge">${esc(badge)}</span>`;
+}
+function renderAlerts(){
+  const t=todayISO(), soon=new Date(); soon.setDate(soon.getDate()+7);
+  const soonISO=soon.toISOString().slice(0,10);
+  const overdue=state.apps.filter(isOverdue);
+  const upcoming=state.apps.filter(a=>a.followUp && a.followUp>t && a.followUp<=soonISO && ACTIVE.includes(a.status));
+  let html="";
+  overdue.forEach(a=>{ html+=`<div class="alert-row red"><span>🔴</span><span><span class="t">${esc(a.company)} — ${esc(a.role)}</span><br><span class="d">Follow-up was due ${fmtDate(a.followUp)}. Don't ghost this lead.</span></span></div>`; });
+  upcoming.forEach(a=>{ html+=`<div class="alert-row amber"><span>🟡</span><span><span class="t">${esc(a.company)} — ${esc(a.role)}</span><br><span class="d">Follow-up due ${fmtDate(a.followUp)}.</span></span></div>`; });
+  $("alerts").innerHTML = html || `<div class="empty">No follow-ups due. You're all caught up.</div>`;
+}
+function renderRecent(){
+  const rows=[...state.apps].sort((a,b)=>(b.dateApplied||"").localeCompare(a.dateApplied||"")).slice(0,8);
+  $("tracker-sub").textContent = state.apps.length+" total";
+  $("recent-rows").innerHTML = rows.map(a=>`<tr class="${isOverdue(a)?"overdue":""}">
+    <td><span class="co">${avatar(a.company)}<span>${esc(a.company)}</span></span></td>
+    <td>${esc(a.role)}${a.location?`<br><span class="role-sub">${esc(a.location)}</span>`:""}</td>
+    <td>${fmtDate(a.dateApplied)}</td><td>${pill(a.status)}</td>
+    <td class="fud">${a.followUp?fmtDate(a.followUp):"—"}</td></tr>`).join("")
+    || `<tr><td colspan="5"><div class="empty">No applications yet.</div></td></tr>`;
+}
+</script>
+<script>
+"use strict";
+/* ---------- applications view ---------- */
+function filteredApps(){
+  const q=$("q").value.trim().toLowerCase(), fs=$("fstatus").value;
+  return state.apps.filter(a=>{
+    const okQ = !q || (a.company+" "+a.role).toLowerCase().includes(q);
+    const okF = !fs || a.status===fs;
+    return okQ && okF;
+  }).sort((a,b)=>(b.dateApplied||"").localeCompare(a.dateApplied||""));
+}
+function renderApps(){
+  const rows=filteredApps();
+  $("apps-empty").style.display = rows.length? "none":"block";
+  $("app-rows").innerHTML = rows.map(a=>`<tr class="${isOverdue(a)?"overdue":""}">
+    <td><span class="co">${avatar(a.company)}<span>${esc(a.company)}</span></span></td>
+    <td>${esc(a.role)}${a.location?`<br><span class="role-sub">${esc(a.location)}</span>`:""}</td>
+    <td>${fmtDate(a.dateApplied)}</td><td>${pill(a.status)}</td>
+    <td class="fud">${a.followUp?fmtDate(a.followUp):"—"}</td>
+    <td style="white-space:nowrap"><button class="iconbtn" data-edit="${a.id}" title="Edit">✏️</button>
+        <button class="iconbtn" data-del="${a.id}" title="Delete">🗑️</button></td></tr>`).join("");
+}
+$("q").addEventListener("input", renderApps);
+$("fstatus").addEventListener("change", renderApps);
+$("app-rows").addEventListener("click", e=>{
+  const eb=e.target.closest("[data-edit]"), db=e.target.closest("[data-del]");
+  if(eb) openModal(eb.dataset.edit);
+  if(db){ const a=state.apps.find(x=>x.id===db.dataset.del);
+    if(confirm(`Delete the application for ${a.company} — ${a.role}?`)){
+      state.apps=state.apps.filter(x=>x.id!==db.dataset.del); save(); renderApps(); } }
+});
+
+/* ---------- modal add/edit ---------- */
+function openModal(id){
+  editingId=id||null;
+  const f=$("app-form"); f.reset();
+  $("modal-title").textContent = id? "Edit application":"Add application";
+  if(id){ const a=state.apps.find(x=>x.id===id);
+    for(const k of ["company","role","location","salary","dateApplied","source","status","followUp","contact","link","notes"])
+      if(f.elements[k]) f.elements[k].value=a[k]||"";
+  } else { f.elements.dateApplied.value=todayISO(); }
+  $("veil").classList.add("open");
+}
+function closeModal(){ $("veil").classList.remove("open"); editingId=null; }
+$("add-btn").addEventListener("click", ()=>openModal());
+$("cancel-btn").addEventListener("click", closeModal);
+$("veil").addEventListener("click", e=>{ if(e.target===$("veil")) closeModal(); });
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeModal(); });
+$("app-form").addEventListener("submit", e=>{
+  e.preventDefault();
+  const f=e.target, obj={};
+  for(const k of ["company","role","location","salary","dateApplied","source","status","followUp","contact","link","notes"])
+    obj[k]=f.elements[k].value.trim();
+  if(editingId){ Object.assign(state.apps.find(x=>x.id===editingId), obj); }
+  else { state.apps.push({...obj, id:"a"+Date.now()}); }
+  save(); closeModal(); renderApps();
+});
+
+/* ---------- interview prep ---------- */
+function renderPrep(){
+  $("prep-list").innerHTML = PREP_ITEMS.map((t,i)=>{
+    const done=!!state.prep[i];
+    return `<label class="check ${done?"done":""}"><input type="checkbox" data-prep="${i}" ${done?"checked":""}>
+      <span class="t">${esc(t)}</span></label>`;
+  }).join("");
+}
+$("prep-list").addEventListener("change", e=>{
+  const c=e.target.closest("[data-prep]"); if(!c) return;
+  state.prep[c.dataset.prep]=c.checked; save(); renderPrep();
+});
+
+/* ---------- settings ---------- */
+$("export-btn").addEventListener("click", ()=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download="job-application-tracker-backup.json"; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+});
+$("import-btn").addEventListener("click", ()=>$("import-file").click());
+$("import-file").addEventListener("change", e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ try{ const d=JSON.parse(r.result);
+      if(!Array.isArray(d.apps)) throw 0;
+      state={apps:d.apps, prep:d.prep||{}}; save(); renderPrep(); renderApps();
+      alert("Backup imported."); }catch(_){ alert("That file doesn't look like a tracker backup."); } };
+  r.readAsText(f); e.target.value="";
+});
+$("samples-btn").addEventListener("click", ()=>{
+  if(confirm("Replace your current data with the sample data?")){
+    state={apps:SAMPLE_APPS.map((a,i)=>({...a,id:"s"+Date.now()+i})), prep:{}}; save(); renderPrep(); renderApps(); }
+});
+$("clear-btn").addEventListener("click", ()=>{
+  if(confirm("Delete ALL applications and checklist progress? This can't be undone.")){
+    state={apps:[], prep:{}}; save(); renderPrep(); renderApps(); }
+});
+
+/* ---------- init ---------- */
+renderPrep();
+renderDashboard();
+window.addEventListener("resize", ()=>{ if($("view-dashboard").classList.contains("active")) renderChart(); });
+</script>
+</body>
+</html>
